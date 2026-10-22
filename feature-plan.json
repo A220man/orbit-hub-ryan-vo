@@ -1,0 +1,97 @@
+{
+  "schema_version": 1,
+  "current_feature": "fastapi-react-skeleton",
+  "features": [
+    {
+      "id": "fastapi-react-skeleton",
+      "title": "FastAPI + React skeleton with health check",
+      "status": "done",
+      "acceptance": [
+        "FastAPI backend starts and serves /health endpoint",
+        "React frontend builds and serves",
+        "Docker compose runs both services",
+        "Frontend displays backend health status"
+      ],
+      "implementation": [
+        "backend/app/main.py",
+        "backend/app/core/config.py",
+        "backend/app/api/health.py",
+        "backend/Dockerfile",
+        "backend/requirements.txt",
+        "backend/pyproject.toml",
+        "frontend/src/main.tsx",
+        "frontend/src/App.tsx",
+        "frontend/src/components/HealthStatus.tsx",
+        "frontend/src/api/client.ts",
+        "frontend/src/types/api.ts",
+        "frontend/vite.config.ts",
+        "frontend/package.json",
+        "frontend/Dockerfile",
+        "frontend/nginx.conf",
+        "docker-compose.yaml",
+        ".env.example",
+        "README.md",
+        "LICENSE",
+        "CHANGELOG.md",
+        "portfolio.json"
+      ],
+      "tests": [
+        "backend/tests/test_health.py",
+        "frontend/src/components/HealthStatus.test.tsx"
+      ],
+      "tests": []
+    },
+    {
+      "id": "core-api-workflow",
+      "title": "Core API workflow: ML model registry with CRUD",
+      "status": "planned",
+      "acceptance": [
+        "Create/list/get/update/delete ML models via API",
+        "SQLite persistence with pagination and filtering",
+        "Frontend dashboard for model registry",
+        "Backend tests for CRUD operations"
+      ],
+      "implementation": [],
+      "tests": []
+    },
+    {
+      "id": "auth-oidc",
+      "title": "OIDC authentication with Keycloak",
+      "status": "planned",
+      "acceptance": [
+        "Keycloak integration in docker-compose",
+        "Backend validates JWT tokens",
+        "Frontend login/logout flow",
+        "Protected API endpoints"
+      ],
+      "implementation": [],
+      "tests": []
+    },
+    {
+      "id": "llm-adapters",
+      "title": "LLM provider adapters (OpenAI, Anthropic, Gemini, Ollama)",
+      "status": "planned",
+      "acceptance": [
+        "Configurable provider selection",
+        "Unified chat completion interface",
+        "Mock adapter for testing",
+        "Provider configuration documented"
+      ],
+      "implementation": [],
+      "tests": []
+    },
+    {
+      "id": "ai-evaluation-workflow",
+      "title": "AI/ML model evaluation workflow",
+      "status": "planned",
+      "acceptance": [
+        "Run evaluation jobs against registered models",
+        "Store evaluation results with metrics",
+        "Frontend displays evaluation history",
+        "Reproducible evaluation command"
+      ],
+      "implementation": [],
+      "tests": []
+    }
+  ]
+}
