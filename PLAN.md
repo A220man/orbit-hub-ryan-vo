@@ -22,13 +22,17 @@ Implementation: `backend/app/main.py`, `backend/app/core/config.py`, `backend/ap
 
 ### core-api-workflow — Core API workflow: ML model registry with CRUD
 
-Status: planned
+Status: done
 
 Acceptance:
 - Create/list/get/update/delete ML models via API
 - SQLite persistence with pagination and filtering
 - Frontend dashboard for model registry
 - Backend tests for CRUD operations
+
+Implementation: `backend/app/models/__init__.py`, `backend/app/models/model.py`, `backend/app/schemas/__init__.py`, `backend/app/schemas/model.py`, `backend/app/api/deps.py`, `backend/app/api/models.py`, `backend/app/core/database.py`, `backend/app/main.py`, `backend/tests/test_models.py`, `backend/tests/conftest.py`
+
+Tests: `backend/tests/test_models.py`
 
 ### auth-oidc — OIDC authentication with Keycloak
 

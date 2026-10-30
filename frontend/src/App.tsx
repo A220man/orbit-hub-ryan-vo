@@ -1,4 +1,6 @@
+
 import { HealthStatus } from './components/HealthStatus';
+import { ModelRegistry } from './components/ModelRegistry';
 
 function App() {
   return (
@@ -9,6 +11,7 @@ function App() {
       </header>
       <main>
         <HealthStatus />
+        <ModelRegistry />
       </main>
     </div>
   );
