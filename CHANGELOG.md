@@ -1,9 +1,30 @@
 # Changelog
 
+## 1.2.0 — work-in-progress checkpoint
+
+Partial code published for continued development. Known issues: STATUS.md.
+
 ## 1.1.0 — work-in-progress checkpoint
 
 Partial code published for continued development. Known issues: STATUS.md.
 
+### Fixed
+- Removed unused TypeScript imports in ModelRegistry component
+- Fixed Pydantic v2 deprecation warning by migrating from class-based Config to SettingsConfigDict
+
+## 1.0.0 — work-in-progress checkpoint
+
+Partial code published for continued development. Known issues: STATUS.md.
+
+### Added
+- FastAPI backend with health check endpoint
+- React + TypeScript + Vite frontend
+- Docker Compose for backend and frontend
+- Backend health test (pytest + httpx)
+- Frontend health status component with test (vitest + testing-library)
+- Basic project structure and configuration files
+- README with architecture diagram and API reference
+- MIT License
 ## 1.0.0 — work-in-progress checkpoint
 
 Partial code published for continued development. Known issues: STATUS.md.
