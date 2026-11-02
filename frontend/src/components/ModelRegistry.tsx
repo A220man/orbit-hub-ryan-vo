@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { api } from '../api/client';
-import type { ModelResponse, ModelListResponse, ModelCreate, ModelUpdate } from '../types/api';
+import type { ModelResponse, ModelCreate } from '../types/api';
 import { ModelCard } from './ModelCard';
 
 export function ModelRegistry() {

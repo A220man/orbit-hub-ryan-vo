@@ -94,7 +94,7 @@ graph TB
 ### Health
 - `GET /api/v1/health` — Service health check
 
-### Models (planned)
+### Models
 - `POST /api/v1/models` — Create model
 - `GET /api/v1/models` — List models (paginated, filterable)
 - `GET /api/v1/models/{id}` — Get model
