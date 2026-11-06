@@ -32,6 +32,8 @@ async def list_models(
     page_size: int = Query(20, ge=1, le=100, description="Items per page"),
     name: Optional[str] = Query(None, description="Filter by name (partial match)"),
     framework: Optional[str] = Query(None, description="Filter by framework"),
+    sort_by: Optional[str] = Query(None, description="Sort field: name, framework, version, created_at, updated_at"),
+    sort_order: Optional[str] = Query("desc", description="Sort order: asc or desc"),
 ) -> ModelListResponse:
     stmt = select(Model)
     count_stmt = select(func.count(Model.id))
@@ -43,8 +45,22 @@ async def list_models(
         stmt = stmt.where(Model.framework == framework)
         count_stmt = count_stmt.where(Model.framework == framework)
 
+    # Build sort column
+    sort_column_map = {
+        "name": Model.name,
+        "framework": Model.framework,
+        "version": Model.version,
+        "created_at": Model.created_at,
+        "updated_at": Model.updated_at,
+    }
+    sort_column = sort_column_map.get(sort_by, Model.created_at)
+    if sort_order == "asc":
+        sort_column = sort_column.asc()
+    else:
+        sort_column = sort_column.desc()
+
     total = (await db.execute(count_stmt)).scalar_one()
-    stmt = stmt.offset((page - 1) * page_size).limit(page_size).order_by(Model.created_at.desc())
+    stmt = stmt.offset((page - 1) * page_size).limit(page_size).order_by(sort_column)
     result = await db.execute(stmt)
     models = result.scalars().all()
 

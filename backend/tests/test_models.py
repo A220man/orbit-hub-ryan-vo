@@ -182,3 +182,87 @@ async def test_delete_model_not_found():
         fake_id = uuid.uuid4()
         response = await client.delete(f"/api/v1/models/{fake_id}")
         assert response.status_code == 404
+@pytest.mark.asyncio
+async def test_list_models_sort_by_name():
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+        # Create models with different names
+        await client.post(
+            "/api/v1/models",
+            json={"name": "ZebraModel", "framework": "PyTorch", "version": "1.0"},
+        )
+        await client.post(
+            "/api/v1/models",
+            json={"name": "AlphaModel", "framework": "PyTorch", "version": "1.0"},
+        )
+        await client.post(
+            "/api/v1/models",
+            json={"name": "BetaModel", "framework": "PyTorch", "version": "1.0"},
+        )
+
+        # Test ascending sort by name
+        response = await client.get("/api/v1/models?sort_by=name&sort_order=asc")
+        assert response.status_code == 200
+        data = response.json()
+        names = [item["name"] for item in data["items"]]
+        # Should be sorted alphabetically ascending
+        assert names == sorted(names)
+
+        # Test descending sort by name
+        response = await client.get("/api/v1/models?sort_by=name&sort_order=desc")
+        assert response.status_code == 200
+        data = response.json()
+        names = [item["name"] for item in data["items"]]
+        # Should be sorted alphabetically descending
+        assert names == sorted(names, reverse=True)
+
+
+@pytest.mark.asyncio
+async def test_list_models_sort_by_framework():
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+        await client.post(
+            "/api/v1/models",
+            json={"name": "ModelA", "framework": "ZFramework", "version": "1.0"},
+        )
+        await client.post(
+            "/api/v1/models",
+            json={"name": "ModelB", "framework": "AFramework", "version": "1.0"},
+        )
+
+        # Test ascending sort by framework
+        response = await client.get("/api/v1/models?sort_by=framework&sort_order=asc")
+        assert response.status_code == 200
+        data = response.json()
+        frameworks = [item["framework"] for item in data["items"]]
+        assert frameworks == sorted(frameworks)
+
+
+@pytest.mark.asyncio
+async def test_list_models_sort_by_version():
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+        await client.post(
+            "/api/v1/models",
+            json={"name": "ModelA", "framework": "PyTorch", "version": "2.0"},
+        )
+        await client.post(
+            "/api/v1/models",
+            json={"name": "ModelB", "framework": "PyTorch", "version": "1.0"},
+        )
+
+        # Test ascending sort by version
+        response = await client.get("/api/v1/models?sort_by=version&sort_order=asc")
+        assert response.status_code == 200
+        data = response.json()
+        versions = [item["version"] for item in data["items"]]
+        assert versions == sorted(versions)
+
+
+@pytest.mark.asyncio
+async def test_list_models_default_sort():
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+        # Default should be created_at desc
+        response = await client.get("/api/v1/models")
+        assert response.status_code == 200
+        data = response.json()
+        # Just verify it returns successfully with default sort
+        assert "items" in data
+        assert "total" in data
