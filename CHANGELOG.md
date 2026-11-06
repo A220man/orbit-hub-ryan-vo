@@ -1,9 +1,18 @@
 # Changelog
 
+## 1.3.0 — work-in-progress checkpoint
+
+Partial code published for continued development. Known issues: STATUS.md.
+
 ## 1.2.0 — work-in-progress checkpoint
 
 Partial code published for continued development. Known issues: STATUS.md.
 
+### Added
+- Model list sorting by name, framework, version, created_at, updated_at
+- Backend API sort_by and sort_order query parameters
+- Frontend dropdown controls for sorting
+- Backend tests for sorting functionality
 ## 1.1.0 — work-in-progress checkpoint
 
 Partial code published for continued development. Known issues: STATUS.md.

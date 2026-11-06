@@ -24,12 +24,14 @@ export const api = {
     get: () => fetchJson<HealthResponse>('/health'),
   },
   models: {
-    list: (params?: { page?: number; page_size?: number; name?: string; framework?: string }) => {
+    list: (params?: { page?: number; page_size?: number; name?: string; framework?: string; sort_by?: string; sort_order?: string }) => {
       const searchParams = new URLSearchParams();
       if (params?.page) searchParams.set('page', params.page.toString());
       if (params?.page_size) searchParams.set('page_size', params.page_size.toString());
       if (params?.name) searchParams.set('name', params.name);
       if (params?.framework) searchParams.set('framework', params.framework);
+      if (params?.sort_by) searchParams.set('sort_by', params.sort_by);
+      if (params?.sort_order) searchParams.set('sort_order', params.sort_order);
       const query = searchParams.toString();
       return fetchJson<ModelListResponse>(`/models${query ? `?${query}` : ''}`);
     },

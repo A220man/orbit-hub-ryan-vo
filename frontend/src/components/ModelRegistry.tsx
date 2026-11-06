@@ -10,6 +10,7 @@ export function ModelRegistry() {
   const [error, setError] = useState<string | null>(null);
   const [pagination, setPagination] = useState({ page: 1, page_size: 10, total: 0 });
   const [filters, setFilters] = useState({ name: '', framework: '' });
+  const [sort, setSort] = useState({ sort_by: 'created_at', sort_order: 'desc' });
   const [showForm, setShowForm] = useState(false);
   const [editingModel, setEditingModel] = useState<ModelResponse | null>(null);
   const [formData, setFormData] = useState<ModelCreate>({
@@ -31,6 +32,8 @@ export function ModelRegistry() {
         page_size: pagination.page_size,
         name: filters.name || undefined,
         framework: filters.framework || undefined,
+        sort_by: sort.sort_by,
+        sort_order: sort.sort_order,
       });
       setModels(data.items);
       setPagination((prev) => ({ ...prev, total: data.total }));
@@ -44,7 +47,7 @@ export function ModelRegistry() {
 
   useEffect(() => {
     fetchModels();
-  }, [pagination.page, filters.name, filters.framework]);
+  }, [pagination.page, filters.name, filters.framework, sort.sort_by, sort.sort_order]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -218,6 +221,23 @@ export function ModelRegistry() {
           onChange={(e) => setFilters({ ...filters, framework: e.target.value })}
           onKeyDown={(e) => e.key === 'Enter' && setPagination((p) => ({ ...p, page: 1 }))}
         />
+        <select
+          value={sort.sort_by}
+          onChange={(e) => setSort({ ...sort, sort_by: e.target.value })}
+        >
+          <option value="created_at">Created At</option>
+          <option value="updated_at">Updated At</option>
+          <option value="name">Name</option>
+          <option value="framework">Framework</option>
+          <option value="version">Version</option>
+        </select>
+        <select
+          value={sort.sort_order}
+          onChange={(e) => setSort({ ...sort, sort_order: e.target.value })}
+        >
+          <option value="desc">Descending</option>
+          <option value="asc">Ascending</option>
+        </select>
       </div>
 
       <div className="models-grid">
