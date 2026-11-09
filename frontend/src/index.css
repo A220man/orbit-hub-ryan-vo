@@ -224,6 +224,35 @@ body {
   padding-top: 0.75rem;
 }
 
+.model-metadata {
+  margin-top: 0.75rem;
+  padding: 0.75rem;
+  background: #f9fafb;
+  border-radius: 4px;
+  border: 1px solid #e5e7eb;
+}
+
+.model-metadata summary {
+  cursor: pointer;
+  font-weight: 500;
+  color: #374151;
+  margin-bottom: 0.5rem;
+}
+
+.model-metadata pre {
+  margin: 0;
+  font-size: 0.75rem;
+  white-space: pre-wrap;
+  word-break: break-word;
+  color: #4b5563;
+  background: #fff;
+  padding: 0.5rem;
+  border-radius: 4px;
+  border: 1px solid #e5e7eb;
+  max-height: 200px;
+  overflow: auto;
+}
+
 .model-form-overlay {
   position: fixed;
   top: 0;

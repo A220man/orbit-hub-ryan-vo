@@ -5,9 +5,29 @@
     {
       "id": "continue-implementation",
       "title": "Continue implementation and resolve known failures",
-      "status": "in_progress",
+      "status": "done",
       "acceptance": [
         "Run checks, fix failures, and implement the next planned feature"
+      ],
+      "implementation": [
+        "frontend/src/components/ModelCard.tsx",
+        "frontend/src/components/ModelRegistry.tsx",
+        "frontend/src/index.css"
+      ],
+      "tests": [
+        "backend/tests/test_models.py",
+        "frontend/src/components/HealthStatus.test.tsx"
+      ]
+    },
+    {
+      "id": "auth-oidc",
+      "title": "OIDC authentication with Keycloak",
+      "status": "planned",
+      "acceptance": [
+        "Keycloak integration in docker-compose",
+        "Backend validates JWT tokens",
+        "Frontend login/logout flow",
+        "Protected API endpoints"
       ],
       "implementation": [],
       "tests": []

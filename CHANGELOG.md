@@ -1,8 +1,17 @@
 # Changelog
 
+## 1.4.0 — work-in-progress checkpoint
+
+Partial code published for continued development. Known issues: STATUS.md.
+
 ## 1.3.0 — work-in-progress checkpoint
 
 Partial code published for continued development. Known issues: STATUS.md.
+
+### Added
+- Model metadata display in ModelCard (collapsible JSON view)
+- JSON validation for metadata field in model create/edit form
+- Frontend CSS styles for metadata display
 
 ## 1.2.0 — work-in-progress checkpoint
 
@@ -13,6 +22,7 @@ Partial code published for continued development. Known issues: STATUS.md.
 - Backend API sort_by and sort_order query parameters
 - Frontend dropdown controls for sorting
 - Backend tests for sorting functionality
+
 ## 1.1.0 — work-in-progress checkpoint
 
 Partial code published for continued development. Known issues: STATUS.md.
