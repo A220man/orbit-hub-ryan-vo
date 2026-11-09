@@ -55,6 +55,17 @@ export function ModelRegistry() {
     setSubmitting(true);
 
     try {
+      // Validate metadata_json if provided
+      if (formData.metadata_json && formData.metadata_json.trim()) {
+        try {
+          JSON.parse(formData.metadata_json);
+        } catch {
+          setFormError('Invalid JSON in metadata field');
+          setSubmitting(false);
+          return;
+        }
+      }
+
       if (editingModel) {
         await api.models.update(editingModel.id, formData);
       } else {

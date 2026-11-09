@@ -19,8 +19,13 @@ export function ModelCard({ model, onEdit, onDelete, isDeleting }: ModelCardProp
         <span className="model-version">v{model.version}</span>
         <span className="model-id">{model.id.slice(0, 8)}...</span>
       </div>
-      {model.description && (
-        <p className="model-description">{model.description}</p>
+      {model.metadata_json && (
+        <div className="model-metadata">
+          <details>
+            <summary>Metadata</summary>
+            <pre>{model.metadata_json}</pre>
+          </details>
+        </div>
       )}
       <div className="model-timestamps">
         <span>Created: {new Date(model.created_at).toLocaleDateString()}</span>
