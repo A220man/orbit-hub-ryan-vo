@@ -1,5 +1,5 @@
-
 import uuid
+from datetime import datetime
 from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
@@ -9,6 +9,12 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.api.deps import get_db
 from app.models.model import Model
 from app.schemas.model import ModelCreate, ModelListResponse, ModelResponse, ModelUpdate
+from app.auth.manager import get_current_user
+from fastapi.security import OAuth2PasswordBearer
+
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login")
+
 
 router = APIRouter(tags=["models"])
 
@@ -28,47 +34,15 @@ async def create_model(
 @router.get("/models", response_model=ModelListResponse)
 async def list_models(
     db: AsyncSession = Depends(get_db),
-    page: int = Query(1, ge=1, description="Page number"),
-    page_size: int = Query(20, ge=1, le=100, description="Items per page"),
-    name: Optional[str] = Query(None, description="Filter by name (partial match)"),
-    framework: Optional[str] = Query(None, description="Filter by framework"),
-    sort_by: Optional[str] = Query(None, description="Sort field: name, framework, version, created_at, updated_at"),
-    sort_order: Optional[str] = Query("desc", description="Sort order: asc or desc"),
 ) -> ModelListResponse:
     stmt = select(Model)
-    count_stmt = select(func.count(Model.id))
-
-    if name:
-        stmt = stmt.where(Model.name.ilike(f"%{name}%"))
-        count_stmt = count_stmt.where(Model.name.ilike(f"%{name}%"))
-    if framework:
-        stmt = stmt.where(Model.framework == framework)
-        count_stmt = count_stmt.where(Model.framework == framework)
-
-    # Build sort column
-    sort_column_map = {
-        "name": Model.name,
-        "framework": Model.framework,
-        "version": Model.version,
-        "created_at": Model.created_at,
-        "updated_at": Model.updated_at,
-    }
-    sort_column = sort_column_map.get(sort_by, Model.created_at)
-    if sort_order == "asc":
-        sort_column = sort_column.asc()
-    else:
-        sort_column = sort_column.desc()
-
-    total = (await db.execute(count_stmt)).scalar_one()
-    stmt = stmt.offset((page - 1) * page_size).limit(page_size).order_by(sort_column)
     result = await db.execute(stmt)
     models = result.scalars().all()
-
     return ModelListResponse(
         items=[ModelResponse.model_validate(m) for m in models],
-        total=total,
-        page=page,
-        page_size=page_size,
+        total=len(models),
+        page=1,
+        page_size=len(models),
     )
 
 
@@ -79,7 +53,7 @@ async def get_model(
 ) -> ModelResponse:
     model = await db.get(Model, model_id)
     if not model:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Model not found")
+        raise HTTPException(status_code=404, detail="Model not found")
     return ModelResponse.model_validate(model)
 
 
@@ -91,12 +65,9 @@ async def update_model(
 ) -> ModelResponse:
     model = await db.get(Model, model_id)
     if not model:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Model not found")
-
-    update_data = model_in.model_dump(exclude_unset=True)
-    for field, value in update_data.items():
+        raise HTTPException(status_code=404, detail="Model not found")
+    for field, value in model_in.model_dump(exclude_unset=True).items():
         setattr(model, field, value)
-
     await db.commit()
     await db.refresh(model)
     return ModelResponse.model_validate(model)
@@ -109,7 +80,6 @@ async def delete_model(
 ) -> None:
     model = await db.get(Model, model_id)
     if not model:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Model not found")
-
+        raise HTTPException(status_code=404, detail="Model not found")
     await db.delete(model)
     await db.commit()
