@@ -51,3 +51,4 @@ Thumbs.db
 *.sqlite3-shm
 .turbo/
 **/data/media/
+.venv*/
