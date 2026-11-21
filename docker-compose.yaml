@@ -11,6 +11,8 @@ services:
       - ENVIRONMENT=development
       - DATABASE_URL=sqlite+aiosqlite:///./orbit.db
       - CORS_ORIGINS=["http://localhost:5173","http://127.0.0.1:5173"]
+      - KEYCLOAK_ISSUER_URL=http://keycloak:8080/realms/orbit-hub
+      - KEYCLOAK_CLIENT_ID=orbit-hub-frontend
     volumes:
       - backend-data:/app/data
     healthcheck:
@@ -37,6 +39,9 @@ services:
       - KEYCLOAK_ADMIN=admin
       - KEYCLOAK_ADMIN_PASSWORD=admin
       - KC_DB=sqlite
+      - KEYCLOAK_DEFAULT_REALM=orbit-hub
+      - KEYCLOAK_HOSTNAME=keycloak
+      - KEYCLOAK_HTTP_PORT=8080
     ports:
       - "8080:8080"
     depends_on:

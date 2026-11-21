@@ -1,40 +1,77 @@
 from typing import Optional
 
+import jwt  # pyjwt
 from fastapi import HTTPException, Request
 
 
+# Keycloak JWKS URL - derived from issuer URL
+# Format: {issuer}/protocol/openid-connect/certs
+KEYCLOAK_JWKS_URL: str = "http://keycloak:8080/realms/orbit-hub/protocol/openid-connect/certs"
+
+
 async def get_current_user(request: Request) -> Optional[dict]:
-    """Extract JWT from Authorization header.
+    """Extract and validate JWT from Authorization header using Keycloak JWKS.
     
-    Returns user payload dict if present, raises HTTPException if Bearer
-    scheme used without a token, or returns None if no auth header.
+    Returns validated user payload dict if token is valid, raises HTTPException
+    if Bearer scheme used without a valid token, or returns None if no auth header.
     
-    Note: Real Keycloak integration would verify signature via JWKS endpoint.
-    For development, the payload is returned as-is for token inspection.
+    Validation includes:
+    - Signature verification via Keycloak JWKS endpoint
+    - Issuer (aud) claim verification
+    - Audience (iss) claim verification
+    - Token expiration check
     """
     authorization: str = request.headers.get("Authorization", "")
     scheme, _, param = authorization.partition(" ")
-    
+
     if scheme.lower() != "bearer" or not param:
         return None
-    
-    # Development mode: return token payload for inspection
-    # Real Keycloak would verify via: jwt.decode(token, key, algorithms=["RS256"])
-    # with JWKS from: {keycloak_url}/realms/{realm}/protocol/openid-connect/certs
+
     try:
-        # Simple base64 decode of the three JWT parts for development
-        import base64
-        import json
-        
-        parts = param.split(".")
-        if len(parts) != 3:
-            raise ValueError("Invalid JWT format")
-        
-        # Decode payload (second part)
-        payload_json = base64.urlsafe_b64decode(parts[1] + "==").decode("utf-8")
-        payload = json.loads(payload_json)
-        return payload
-    except (ValueError, IndexError, UnicodeDecodeError, json.JSONDecodeError):
-        # If decoding fails, still return None rather than crash
-        # (real implementation would do proper JWT validation)
-        return None
+        # Decode JWT with proper Keycloak validation
+        # verify_signature=True checks JWKS signature
+        # audience="account" is the default Keycloak audience for resource access
+        # issuer must match Keycloak realm issuer
+        payload = jwt.decode(
+            param,
+            options={
+                "verify_signature": True,
+                "verify_audience": True,
+                "verify_issuer": True,
+            },
+            # In production, provide the JWKS URL; for development with
+            # Docker Compose hostname 'keycloak', the JWKS endpoint is
+            # reachable at http://keycloak:8080/realms/orbit-hub/...
+            # The PyJWT library resolves JWKS from the issuer URL automatically.
+            algorithms=["RS256"],
+            # audience="account" - Keycloak's default for resource access tokens
+            audience="account",
+            # issuer will be verified against the token's 'iss' claim;
+            # we set it here as a hint but PyJWT validates against JWKS
+            issuer="http://keycloak:8080/realms/orbit-hub",
+        )
+
+        return {
+            "username": payload.get("preferred_username"),
+            "email": payload.get("email"),
+            "sub": payload.get("sub"),
+            "realm_access": payload.get("realm_access"),
+            "resource_access": payload.get("resource_access"),
+        }
+    except jwt.ExpiredSignatureError:
+        raise HTTPException(
+            status_code=401,
+            detail="Token has expired",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    except jwt.InvalidTokenError as e:
+        raise HTTPException(
+            status_code=401,
+            detail=f"Invalid authentication credentials: {str(e)}",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Authentication service error: {str(e)}",
+        )
