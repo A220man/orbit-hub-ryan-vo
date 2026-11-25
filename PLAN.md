@@ -4,7 +4,7 @@ Each round completes one feature or repair. Future items are planned, not implem
 
 ## Current round
 
-continue-implementation
+auth-oidc
 
 ## Roadmap
 
@@ -21,11 +21,15 @@ Tests: `backend/tests/test_models.py`, `frontend/src/components/HealthStatus.tes
 
 ### auth-oidc — OIDC authentication with Keycloak
 
-Status: planned
+Status: in_progress
 
 Acceptance:
 - Keycloak integration in docker-compose
 - Backend validates JWT tokens
 - Frontend login/logout flow
 - Protected API endpoints
+
+Implementation: `backend/app/api/auth_router.py - login endpoint`, `backend/app/main.py - Keycloak config in app state`, `backend/app/auth/manager.py - JWT validation with RS256`
+
+Tests: `backend/tests/test_auth.py - existing auth tests`
 
