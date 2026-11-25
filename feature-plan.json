@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "current_feature": "continue-implementation",
+  "current_feature": "auth-oidc",
   "features": [
     {
       "id": "continue-implementation",
@@ -22,15 +22,21 @@
     {
       "id": "auth-oidc",
       "title": "OIDC authentication with Keycloak",
-      "status": "planned",
+      "status": "in_progress",
       "acceptance": [
         "Keycloak integration in docker-compose",
         "Backend validates JWT tokens",
         "Frontend login/logout flow",
         "Protected API endpoints"
       ],
-      "implementation": [],
-      "tests": []
+      "implementation": [
+        "backend/app/api/auth_router.py - login endpoint",
+        "backend/app/main.py - Keycloak config in app state",
+        "backend/app/auth/manager.py - JWT validation with RS256"
+      ],
+      "tests": [
+        "backend/tests/test_auth.py - existing auth tests"
+      ]
     }
   ]
 }

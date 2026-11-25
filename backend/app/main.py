@@ -13,6 +13,9 @@ from app.api.auth_router import router as auth_router
 async def lifespan(app: FastAPI):
     # Startup
     await init_db()
+    # Store Keycloak config from app state for use in route handlers
+    app.state.keycloak_issuer_url = settings.KEYCLOAK_ISSUER_URL
+    app.state.keycloak_client_id = settings.KEYCLOAK_CLIENT_ID
     yield
     # Shutdown
 
